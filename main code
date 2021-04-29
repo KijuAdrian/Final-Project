@@ -1,4 +1,5 @@
 import pygame
+import time
 
 pygame.init()
 
@@ -12,45 +13,62 @@ clock = pygame.time.Clock()
 
 xpos = 400
 ypos = 400
-counter=0
 counter1=0
-counter2=0
-counter3=0
-counter4=0
+counter=0
 direction = 0 #0 is left, 1 is right, 2 is up, 3 is down
+d1=False
 
-class entity:
-    def __init__(self,xpos,ypos,counter,counter1,counter2,counter3,counter4,direction):#;-;
-        self.xpos = 400
-        self.ypos = 400
-        self.counter=0
-        self.counter1=0
-        self.counter2=0
-        self.counter3=0
-        self.counter4=0
-        self.direction = 0 #0 is left, 1 is right, 2 is up, 3 is down
-
-class player(entity):
-    def draw(d,c):
-            direction=d
-            counter1+=1
-            if counter1>5:
-                counter1=0
-                counter[c]+=1
-                if counter[c]>2: #i have 8 images in my row (first is 0)
-                    counter[c] = 0
-
-class enemy(entity):
-    pass
+def moveimage():
+    global counter1
+    global counter
+    global xpos
+    global ypos
+    global d1
+    if direction==0 or direction==1:
+        if direction==0 and d1==True:
+            d=-3
+            d1=False
+        elif direction==1 and d1==True:
+            d=3
+            d1=False
+        elif direction==0 and d1==False:
+            d=-2
+        elif direction==1 and d1==False:
+            d=2
+        xpos+=d
+        counter1+=1
+        if counter1>5:
+            counter1=0
+            counter+=1
+            if  counter>2: #i have 8 images in my row (first is 0)
+                counter = 0
+    elif direction==2 or direction==3:
+        if direction==2 and d1==False:
+            d=2
+        elif direction==3 and d1==False:
+            d=-2
+        elif direction==2 and d1==True:
+            d=3
+            d1=False
+        elif direction==3 and d1==True:
+            d=-3
+            d1=False
+        ypos+=d
+        counter1+=1
+        if  counter1>5:
+            counter1=0
+            counter+=1
+            if  counter>2: #i have 8 images in my row (first is 0)
+                counter = 0
 
 Map = [[2,2,2,2,3,3,2,2,2,2],
        [2,0,0,0,0,0,0,0,0,2],
-       [2,0,1,0,0,0,0,0,0,2],
-       [2,0,1,0,0,0,0,0,0,2],
-       [2,0,1,0,0,0,0,0,0,2],
-       [2,0,1,0,0,0,0,0,0,2],
-       [2,0,1,0,0,0,0,0,0,2],
-       [2,0,1,0,0,0,0,0,0,2],
+       [2,0,0,0,0,0,0,0,0,2],
+       [2,0,0,0,0,0,0,0,0,2],
+       [2,0,0,0,0,0,0,0,0,2],
+       [2,0,0,0,0,0,0,0,0,2],
+       [2,0,0,0,0,0,0,0,0,2],
+       [2,0,0,0,0,0,0,0,0,2],
        [2,0,0,0,0,0,0,0,0,2],
        [2,2,2,2,2,2,2,2,2,2],]
 
@@ -65,49 +83,27 @@ while True: #GAME LOOP
             quit()
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
-        direction = 0
-        xpos-=2
-        #draw(0,0)
-        counter1+=1
-        if counter1>5:
-            counter1=0
-            counter+=1
-            if counter>2: #i have 8 images in my row (first is 0)
-                counter = 0
+        direction=0
+        moveimage()
     if keys[pygame.K_RIGHT]:
         direction = 1
-        xpos+=2  
-        counter1+=1
-        if counter1>5:
-            counter1=0
-            counter2+=1
-            if counter2>2: #i have 8 images in my row (first is 0)
-                counter2 = 0
+        moveimage()
     if keys[pygame.K_DOWN]:
         direction = 2
-        ypos+=2
-        counter1+=1
-        if counter1>5:
-            counter1=0
-            counter3+=1
-            if counter3>2: #i have 8 images in my row (first is 0)
-                counter3 = 0
+        moveimage()
     if keys[pygame.K_UP]:
         direction = 3
-        ypos-=2  
-        counter1+=1
-        if counter1>5:
-            counter1=0
-            counter4+=1
-            if counter4>2: #i have 8 images in my row (first is 0)
-                counter4 = 0
+        moveimage()
+    if keys[pygame.K_LSHIFT]:
+        d1=True
+        moveimage()
     
 #render section
     screen.fill((255, 255, 255))
 
     for i in range (10):
         for j in range (10):
-             if Map[j][i]==1:
+             if Map[j][i]==0:
                 floorrect = floor.get_rect(topleft=(i*64,j*64))
                 screen.blit(floor, floorrect)
              if Map[j][i]==2:
@@ -119,12 +115,12 @@ while True: #GAME LOOP
     if direction == 0:
         screen.blit(image, (xpos,ypos), (0+counter*64,128,64,64)) #each of my images are 32 wide, 48 tall
     if direction == 1:
-        screen.blit(image, (xpos,ypos), (0+counter2*64,192,64,64)) #each of my images are 32 wide, 48 tall
+        screen.blit(image, (xpos,ypos), (0+counter*64,192,64,64)) #each of my images are 32 wide, 48 tall
     if direction == 2:
-        screen.blit(image, (xpos,ypos), (0+counter3*64,0,64,64)) #each of my images are 32 wide, 48 tall
+        screen.blit(image, (xpos,ypos), (0+counter*64,0,64,64)) #each of my images are 32 wide, 48 tall
     if direction == 3:
-        screen.blit(image, (xpos,ypos), (0+counter4*64,64,64,64)) #each of my images are 32 wide, 48 tall
-    #ZEE RENDER SECTION
+        screen.blit(image, (xpos,ypos), (0+counter*64,64,64,64)) #each of my images are 32 wide, 48 tall
+    #pygame.draw.rect(screen, (0,0,0), [xpos,ypos, 60, 60])
     pygame.display.flip() #draw all the stuff from memory to screen
 
        
