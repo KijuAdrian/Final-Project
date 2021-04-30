@@ -6,18 +6,69 @@ pygame.init()
 screen = pygame.display.set_mode((640,640))
 pygame.display.set_caption('The One Who Hides')
 image = pygame.image.load('warrior.png')
+image1 = pygame.image.load('warrior3.png')
 floor = pygame.image.load('grey64.png')
 wall = pygame.image.load('dgrey64.png')
 door = pygame.image.load('door.png')
 clock = pygame.time.Clock()
 
-xpos = 400
-ypos = 400
+xpos = 300
+ypos = 480
+ex=300
+ey=160
 counter1=0
-counter=0
-direction = 0 #0 is left, 1 is right, 2 is up, 3 is down
+counter=1
+direction = 3 #0 is left, 1 is right, 2 is up, 3 is down
 d1=False
-
+HP=100#player health
+PR=0#player resistance
+ER=0#enemy resistnace
+HE=100#enemy health
+PD=10#player damage
+ED=20#enemy damage
+PAD=1.5#player attack delay
+EAD=4#enemy attack delay
+money=0
+PA=False#player has landed a hit
+ET=[False,False,False,False,False,False,False,False]#enemy type= last laugh, normal, fire, water, earth, wind, enraged, bulky
+def enemymove():
+    global ey
+    global ex
+    a=0
+    b=0
+    if ey>ypos and ET[7]==True:
+        ey-=1
+    if ey<ypos and ET[7]==True:
+        ey+=1
+    if ex>xpos and ET[7]==True:
+        ex-=1
+    if ex<xpos and ET[7]==True:
+        ex+=1
+    if ey>ypos and ET[7]==False:
+        ey-=1.7
+    if ey<ypos and ET[7]==False:
+        ey+=1.7
+    if ex>xpos and ET[7]==False:
+        ex-=1.7
+    if ex<xpos and ET[7]==False:
+        ex+=1.7
+        
+def playerattack():
+    global HP#player health
+    global PR#player resistance
+    global ER#enemy resistnace
+    global HE#enemy health
+    global PD#player damage
+    global ED#enemy damage
+    global PAD#player attack delay
+    global EAD#enemy attack delay
+    global money
+    if PA==True:
+        HE-=PD
+        if ET[0]==True:
+            a=PD/2
+            HP-=a
+                
 def moveimage():
     global counter1
     global counter
@@ -97,7 +148,28 @@ while True: #GAME LOOP
     if keys[pygame.K_LSHIFT]:
         d1=True
         moveimage()
-    
+    if xpos>512:
+        if keys[pygame.K_LSHIFT]:
+            xpos-=5
+        else:
+            xpos-=2
+    if xpos<64:
+        if keys[pygame.K_LSHIFT]:
+            xpos+=5
+        else:
+            xpos+=2
+    if ypos>512:
+        if keys[pygame.K_LSHIFT]:
+            ypos-=5
+        else:
+            ypos-=2
+    if ypos<64:
+        if keys[pygame.K_LSHIFT]:
+            ypos+=5
+        else:
+            ypos+=2
+            
+    enemymove()
 #render section
     screen.fill((255, 255, 255))
 
@@ -121,7 +193,14 @@ while True: #GAME LOOP
     if direction == 3:
         screen.blit(image, (xpos,ypos), (0+counter*64,64,64,64)) #each of my images are 32 wide, 48 tall
     #pygame.draw.rect(screen, (0,0,0), [xpos,ypos, 60, 60])
+    if direction == 0:
+        screen.blit(image1, (ex,ey), (0+counter*64,128,64,64)) #each of my images are 32 wide, 48 tall
+    if direction == 1:
+        screen.blit(image1, (ex,ey), (0+counter*64,192,64,64)) #each of my images are 32 wide, 48 tall
+    if direction == 2:
+        screen.blit(image1, (ex,ey), (0+counter*64,0,64,64)) #each of my images are 32 wide, 48 tall
+    if direction == 3:
+        screen.blit(image1, (ex,ey), (0+counter*64,64,64,64)) #each of my images are 32 wide, 48 tall
     pygame.display.flip() #draw all the stuff from memory to screen
-
        
 pygame.quit() #buh bye
