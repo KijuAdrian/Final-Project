@@ -10,6 +10,9 @@ image1 = pygame.image.load('warrior3.png')
 floor = pygame.image.load('grey64.png')
 wall = pygame.image.load('dgrey64.png')
 door = pygame.image.load('door.png')
+boom = pygame.image.load('boom.png')
+green = pygame.image.load('64green.png')
+red = pygame.image.load('64red.png')
 clock = pygame.time.Clock()
 
 xpos = 300
@@ -18,17 +21,19 @@ ex=300
 ey=160
 counter1=0
 counter=1
+counter2=0
+counter3=0
 direction = 3 #0 is left, 1 is right, 2 is up, 3 is down
 d1=False
 HP=100#player health
-PR=0#player resistance
-ER=0#enemy resistnace
 HE=100#enemy health
 PD=10#player damage
 ED=20#enemy damage
-PAD=1.5#player attack delay
-EAD=4#enemy attack delay
 money=0
+z=0
+x=0
+i=False
+y=0
 PA=False#player has landed a hit
 ET=[False,False,False,False,False,False,False,False]#enemy type= last laugh, normal, fire, water, earth, wind, enraged, bulky
 def enemymove():
@@ -45,30 +50,55 @@ def enemymove():
     if ex<xpos and ET[7]==True:
         ex+=1
     if ey>ypos and ET[7]==False:
-        ey-=1.7
+        ey-=1.4
     if ey<ypos and ET[7]==False:
-        ey+=1.7
+        ey+=1.4
     if ex>xpos and ET[7]==False:
-        ex-=1.7
+        ex-=1.4
     if ex<xpos and ET[7]==False:
-        ex+=1.7
+        ex+=1.4
         
 def playerattack():
     global HP#player health
-    global PR#player resistance
-    global ER#enemy resistnace
     global HE#enemy health
     global PD#player damage
     global ED#enemy damage
-    global PAD#player attack delay
-    global EAD#enemy attack delay
     global money
-    if PA==True:
-        HE-=PD
-        if ET[0]==True:
-            a=PD/2
-            HP-=a
-                
+    global z
+    if z<95:
+        z+=1
+        #print(z)
+    if xpos<ex+64 and xpos+64>ex and ypos<ey+64 and ypos+64>ey:
+            if keys[pygame.K_SPACE] and z==95:
+                print("hit")
+                z=0
+                HE-=PD
+                if ET[0]==True:
+                    a=PD/2
+                    HP-=a
+          
+def enemyattack():
+    global HP#player health
+    global HE#enemy health
+    global PD#player damage
+    global ED#enemy damage
+    global money
+    global x
+    global y
+    if x<190:
+        x+=1
+        #print(x)
+    if ex<xpos+64 and ex+64>xpos and ey<ypos+64 and ey+64>ypos and x==190:
+        if y<25:
+            y+=1
+            print(y)
+            if y==25:
+                print("hit2")
+                x=0
+                y=0
+                i=True
+                HP-=ED
+            
 def moveimage():
     global counter1
     global counter
@@ -123,6 +153,9 @@ Map = [[2,2,2,2,3,3,2,2,2,2],
        [2,0,0,0,0,0,0,0,0,2],
        [2,2,2,2,2,2,2,2,2,2],]
 
+HB  =[[1,1,1,1,1,1,1,1,1,1]]
+EHB =[[1,1,1,1,1,1,1,1,1,1]]
+
 while True: #GAME LOOP
     clock.tick(60)
 #input/output section
@@ -170,6 +203,11 @@ while True: #GAME LOOP
             ypos+=2
             
     enemymove()
+    enemyattack()
+    playerattack()
+    #print("cheese")
+
+
 #render section
     screen.fill((255, 255, 255))
 
@@ -184,6 +222,22 @@ while True: #GAME LOOP
              if Map[j][i]==3:
                 doorrect = door.get_rect(topleft=(i*64,j*64))
                 screen.blit(door, doorrect)
+    for i in range (10):
+        for j in range (1):
+             if HB[j][i]==1:
+                greenrect = green.get_rect(topleft=(i*16,j*64))
+                screen.blit(green, greenrect)
+             if HB[j][i]==0:
+                redrect = red.get_rect(topleft=(i*16,j*64))
+                screen.blit(red, redrect)
+    for i in range (10):
+        for j in range (1):
+             if EHB[j][i]==1:
+                greenrect = green.get_rect(topleft=(480+i*16,j*64))
+                screen.blit(green, greenrect)
+             if EHB[j][i]==0:
+                redrect = red.get_rect(topleft=(480+i*16,j*64))
+                screen.blit(red, redrect)
     if direction == 0:
         screen.blit(image, (xpos,ypos), (0+counter*64,128,64,64)) #each of my images are 32 wide, 48 tall
     if direction == 1:
@@ -201,6 +255,9 @@ while True: #GAME LOOP
         screen.blit(image1, (ex,ey), (0+counter*64,0,64,64)) #each of my images are 32 wide, 48 tall
     if direction == 3:
         screen.blit(image1, (ex,ey), (0+counter*64,64,64,64)) #each of my images are 32 wide, 48 tall
+    if i==True:
+        boomrect = boom.get_rect(topleft=(0,0))
+        screen.blit(boom, boomrect)
     pygame.display.flip() #draw all the stuff from memory to screen
-       
+    
 pygame.quit() #buh bye
