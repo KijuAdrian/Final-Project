@@ -18,7 +18,15 @@ red = pygame.image.load('64red.png')
 clock = pygame.time.Clock()
 
 font = pygame.font.Font('freesansbold.ttf',20)
-text = font.render('shop',1,(0,0,200))
+text = font.render('Bow:100 moneys',1,(0,0,200))
+text1 = font.render('Health+50:25 moneys',1,(0,0,200))
+
+PLAYING=0
+SHOPPING=1
+PLAY = 0
+SHOP = 1
+game_state = PLAYING
+pressed = [False, False]
 
 my=0
 mx=0
@@ -34,18 +42,51 @@ counter3=0
 direction = 3 #0 is left, 1 is right, 2 is up, 3 is down
 d1=False
 HP=100#player health
-HE=100#enemy health
+HE=10#enemy health
 PD=10#player damage
-ED=20#enemy damage
+ED=30 #enemy damage
 money=0
 z=0
 x=0
-i=False
+Bow=False
 y=0
+i=False
 direction1=0
 PA=False#player has landed a hit
 ET=[False,False,False,False,False,False,False,False]#enemy type= last laugh, normal, fire, water, earth, wind, enraged, bulky
 print(ET[6])
+def m():
+    print(money)
+def market():
+    global money
+    global z
+    global Bow
+    if xpos>64*3 and xpos<64*4 and ypos>64*2 and ypos<64*3:
+        if z<200:
+            z+=1
+            print(z)
+        if z==200 and money>=100:
+            Bow=True
+            print("its pizza time, i mean bow")
+            money-=100
+    else:
+        z=0
+def market1():
+    global money
+    global z
+    global HP
+    if xpos>64*6 and xpos<64*7 and ypos>64*2 and ypos<64*3:
+        if z<200:
+            z+=1
+            print(z)
+        if z==200 and money>=25:
+            HP+=50
+            print("its pizza time, i mean +50 health")
+            money-=25
+    else:
+        z=0
+def con():
+    HE=100
 def enemymove():
     global ey
     global ex
@@ -87,7 +128,7 @@ def playerattack():
     if z<95:
         z+=1
         #print(z)
-    if xpos<ex+64 and xpos+64>ex and ypos<ey+64 and ypos+64>ey:
+    if xpos+5<ex+54 and xpos+54>ex+5 and ypos+2<ey+61 and ypos+61>ey+2:
             if keys[pygame.K_SPACE] and z==95:
                 print("hit")
                 z=0
@@ -109,7 +150,7 @@ def enemyattack():
     if x<190:
         x+=1
         #print(x)
-    if ex<xpos+64 and ex+64>xpos and ey<ypos+64 and ey+64>ypos and x==190:
+    if ex+5<xpos+54 and ex+54>xpos+5 and ey+2<ypos+61 and ey+61>ypos+2 and x==190:
         if y<35:
             y+=1
             print(y)
@@ -120,6 +161,8 @@ def enemyattack():
                 i=True
                 HP-=ED
                 print("player, ",HP)
+    else:
+        y=0
             
 def moveimage():
     global counter1
@@ -235,7 +278,7 @@ def healthbars():
         EHB =[[0,0,0,0,0,0,0,0,0,0]]
         
 def shop():
-    print("its the cheese man")
+    print("cheese")
     
 Map = [[2,2,2,2,3,3,2,2,2,2],
        [2,0,0,0,0,0,0,0,0,2],
@@ -263,8 +306,9 @@ while HP>0: #GAME LOOP
     for event in events:
         if event.type==pygame.MOUSEMOTION:
             mousePos=event.pos
-    #if event.type == pygame.MOUSEBUTTONDOWN:
-        #if mx
+        #if event.type == pygame.MOUSEBUTTONDOWN : #check if clicked#fix will go here
+         #   if mousePos[0]<64 and mousePos[0]>0 and mousePos[1]<66 and mousePos[1]>16:
+          #      shop()
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
         direction=0
@@ -301,49 +345,58 @@ while HP>0: #GAME LOOP
             ypos+=5
         else:
             ypos+=2
-            
-    enemymove()
-    enemyattack()
+
     playerattack()
-    Emoveimage()
     healthbars()
-    if HE<=0:
+    if HE==0:
         money+=100
-    if keys[pygame.K_t]:
-        shop()
-    #print("cheese")
-
-
+        HE-=1
+        print(money)
+    if HE<=0:
+        if keys[pygame.K_t]:
+            shop()
+            pressed[SHOP]=True
+        else:
+            pressed[SHOP]=False
+    if keys[pygame.K_y]:
+        pressed[PLAY]=True
+    else:
+        pressed[PLAY]=False
+    if keys[pygame.K_c]:
+        con()
+        m()
 #render section
     screen.fill((255, 255, 255))
-
+        #pygame.draw.rect(screen, (0,0,0), [0,16, 102, 48])
+        #screen.blit(text, (5,21))
+        
     for i in range (10):
-        for j in range (10):
-             if Map[j][i]==0:
-                floorrect = floor.get_rect(topleft=(i*64,j*64))
-                screen.blit(floor, floorrect)
-             if Map[j][i]==2:
-                wallrect = wall.get_rect(topleft=(i*64,j*64))
-                screen.blit(wall, wallrect)
-             if Map[j][i]==3:
-                doorrect = door.get_rect(topleft=(i*64,j*64))
-                screen.blit(door, doorrect)
+            for j in range (10):
+                if Map[j][i]==0:
+                    floorrect = floor.get_rect(topleft=(i*64,j*64))
+                    screen.blit(floor, floorrect)
+                if Map[j][i]==2:
+                    wallrect = wall.get_rect(topleft=(i*64,j*64))
+                    screen.blit(wall, wallrect)
+                if Map[j][i]==3:
+                    doorrect = door.get_rect(topleft=(i*64,j*64))
+                    screen.blit(door, doorrect)
     for i in range (10):
-        for j in range (1):
-             if HB[j][i]==1:
-                greenrect = green.get_rect(topleft=(i*16,j*64))
-                screen.blit(green, greenrect)
-             if HB[j][i]==0:
-                redrect = red.get_rect(topleft=(i*16,j*64))
-                screen.blit(red, redrect)
+            for j in range (1):
+                if HB[j][i]==1:
+                    greenrect = green.get_rect(topleft=(i*16,j*64))
+                    screen.blit(green, greenrect)
+                if HB[j][i]==0:
+                    redrect = red.get_rect(topleft=(i*16,j*64))
+                    screen.blit(red, redrect)
     for i in range (10):
-        for j in range (1):
-             if EHB[j][i]==1:
-                greenrect = green.get_rect(topleft=(480+i*16,j*64))
-                screen.blit(green, greenrect)
-             if EHB[j][i]==0:
-                redrect = red.get_rect(topleft=(480+i*16,j*64))
-                screen.blit(red, redrect)
+            for j in range (1):
+                if EHB[j][i]==1:
+                    greenrect = green.get_rect(topleft=(480+i*16,j*64))
+                    screen.blit(green, greenrect)
+                if EHB[j][i]==0:
+                    redrect = red.get_rect(topleft=(480+i*16,j*64))
+                    screen.blit(red, redrect)
     if direction == 0:
         screen.blit(image, (xpos,ypos), (0+counter*64,128,64,64)) #each of my images are 32 wide, 48 tall
     if direction == 1:
@@ -352,16 +405,56 @@ while HP>0: #GAME LOOP
         screen.blit(image, (xpos,ypos), (0+counter*64,0,64,64)) #each of my images are 32 wide, 48 tall
     if direction == 3:
         screen.blit(image, (xpos,ypos), (0+counter*64,64,64,64)) #each of my images are 32 wide, 48 tall
-    pygame.draw.rect(screen, (0,0,0), [0,16, 64, 50])
-    if direction1 == 0:
-        screen.blit(image1, (ex,ey), (0+counter2*64,128,64,64)) #each of my images are 32 wide, 48 tall
-    if direction1 == 1:
-        screen.blit(image1, (ex,ey), (0+counter2*64,192,64,64)) #each of my images are 32 wide, 48 tall
-    if direction1 == 2:
-        screen.blit(image1, (ex,ey), (0+counter2*64,0,64,64)) #each of my images are 32 wide, 48 tall
-    if direction1 == 3:
-        screen.blit(image1, (ex,ey), (0+counter2*64,64,64,64)) #each of my images are 32 wide, 48 tall
-    screen.blit(text, (5,21))
+        
+    if game_state == PLAYING:
+        Map = [[2,2,2,2,3,3,2,2,2,2],
+               [2,0,0,0,0,0,0,0,0,2],
+               [2,0,0,0,0,0,0,0,0,2],
+               [2,0,0,0,0,0,0,0,0,2],
+               [2,0,0,0,0,0,0,0,0,2],  
+               [2,0,0,0,0,0,0,0,0,2],
+               [2,0,0,0,0,0,0,0,0,2],
+               [2,0,0,0,0,0,0,0,0,2],
+               [2,0,0,0,0,0,0,0,0,2],
+               [2,2,2,2,2,2,2,2,2,2],]
+        if HE>0:
+            if direction1 == 0:
+                screen.blit(image1, (ex,ey), (0+counter2*64,128,64,64)) #each of my images are 32 wide, 48 tall
+            if direction1 == 1:
+                screen.blit(image1, (ex,ey), (0+counter2*64,192,64,64)) #each of my images are 32 wide, 48 tall
+            if direction1 == 2:
+                screen.blit(image1, (ex,ey), (0+counter2*64,0,64,64)) #each of my images are 32 wide, 48 tall
+            if direction1 == 3:
+                screen.blit(image1, (ex,ey), (0+counter2*64,64,64,64)) #each of my images are 32 wide, 48 tall
+            enemymove()
+            enemyattack()
+            Emoveimage()
+    
+        if HE<=0:
+            if pressed[SHOP] == True:
+                game_state = SHOPPING
+            
+    if game_state == SHOPPING:
+        Map = [[2,2,2,2,2,2,2,2,2,2],
+               [2,0,0,0,0,0,0,0,0,2],
+               [2,0,0,2,0,0,2,0,0,2],
+               [2,0,0,0,0,0,0,0,0,2],
+               [2,0,0,0,0,0,0,0,0,2],  
+               [2,0,0,0,0,0,0,0,0,2],
+               [2,0,0,0,0,0,0,0,0,2],
+               [2,0,0,0,0,0,0,0,0,2],
+               [2,0,0,0,0,0,0,0,0,2],
+               [2,2,2,2,2,2,2,2,2,2],]
+        screen.blit(text, (64*3,64*2))
+        screen.blit(text1, (64*6,64*2))
+        if xpos>64*3 and xpos<64*4 and ypos>64*2 and ypos<64*3:
+            market()
+        if xpos>64*6 and xpos<64*7 and ypos>64*2 and ypos<64*3:
+            market1()
+        if pressed[PLAY] == True:
+            game_state = PLAYING
+
+    #pygame.draw.rect(screen, (0,0,0), [ex+5,ey+2,54,61])
     #if i==True:
      #   boomrect = boom.get_rect(topleft=(0,0))
       #  screen.blit(boom, boomrect)
