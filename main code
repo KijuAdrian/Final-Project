@@ -19,7 +19,7 @@ clock = pygame.time.Clock()
 font = pygame.font.Font('freesansbold.ttf',20)
 text = font.render('Bow:100 moneys',1,(0,0,200))
 text1 = font.render('Health+50:25 moneys',1,(0,0,200))
-text2 = font.render('Player hit cooldown: ',1,(0,0,200))
+text2 = font.render('Player hit cooldown:     /95',1,(0,0,200))
 text3 = font.render('Enemy hit cooldown:     /34',1,(0,0,200))
 text4 = font.render('Bow charge: ',1,(0,0,200))
 text5 = font.render('Money: ',1,(0,0,200))
@@ -49,8 +49,11 @@ HE=10#enemy health
 PD=10#player damage
 ED=30 #enemy damage
 money=0
+text15 = font.render(str(int(money)),1,(0,0,200))
 z=0
 text12 = font.render(str(int(z)),1,(0,0,200))
+w=0
+text14 = font.render(str(int(w)),1,(0,0,200))
 x=0
 Bow=False
 y=0
@@ -60,8 +63,6 @@ direction1=0
 PA=False#player has landed a hit
 ET=[False,False,False,False,False,False,False,False]#enemy type= last laugh, normal, fire, water, earth, wind, enraged, bulky
 print(ET[6])
-def m():
-    print(money)
 def market():
     global money
     global z
@@ -137,28 +138,27 @@ def playerattack():
     global HP#player health
     global HE#enemy health
     global PD#player damage
-    global ED#enemy damage
-    global money
-    global z
-    if z<95:
-        z+=1
+    global w
+    text14 = font.render(str(int(w)),1,(0,0,200))
+    if w<95:
+        w+=1
+        text14 = font.render(str(int(w)),1,(0,0,200))
     if xpos+5<ex+54 and xpos+54>ex+5 and ypos+2<ey+61 and ypos+61>ey+2:
-            if keys[pygame.K_SPACE] and z==95:
+            if keys[pygame.K_SPACE] and w==95:
                 print("hit")
-                z=0
+                w=0
                 HE-=PD
                 print("enemy, ",HE)
                 if ET[0]==True:
                     a=PD/2
                     HP-=a
                     print("player, ",HP)
-          
+    screen.blit(text14, (205,16))
 def enemyattack():
     global HP#player health
     global HE#enemy health
     global PD#player damage
     global ED#enemy damage
-    global money
     global x
     global y
     if x<190:
@@ -357,7 +357,6 @@ while HP>0: #GAME LOOP
         else:
             ypos+=2
 
-    playerattack()
     text12 = font.render(str(int(z)),1,(0,0,200))
     screen.blit(text12, (100,36))
     healthbars()
@@ -365,6 +364,7 @@ while HP>0: #GAME LOOP
         money+=100
         HE-=1
         print(money)
+        text15 = font.render(str(int(money)),1,(0,0,200))
     if HE<=0:
         if keys[pygame.K_t]:
             pressed[SHOP]=True
@@ -376,8 +376,6 @@ while HP>0: #GAME LOOP
         pressed[PLAY]=False
     if keys[pygame.K_c]:
         con()
-    if keys[pygame.K_m]:
-        m()
 #render section
     screen.fill((255, 255, 255))
         #pygame.draw.rect(screen, (0,0,0), [0,16, 102, 48])
@@ -442,6 +440,8 @@ while HP>0: #GAME LOOP
             enemymove()
             enemyattack()
             Emoveimage()
+        playerattack()
+        screen.blit(text15, (80,56))
     
         if HE<=0:
             if pressed[SHOP] == True:
@@ -469,6 +469,9 @@ while HP>0: #GAME LOOP
         healthbars()
         if pressed[PLAY] == True:
             game_state = PLAYING
+        playerattack()
+        text15 = font.render(str(int(money)),1,(0,0,200))
+        screen.blit(text15, (80,56))
     screen.blit(text2, (0,16))
     screen.blit(text3, (350,16))
     screen.blit(text4, (0,36))
