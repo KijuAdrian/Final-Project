@@ -56,6 +56,9 @@ w=0
 text14 = font.render(str(int(w)),1,(0,0,200))
 x=0
 Bow=False
+bow=False
+bx=xpos
+by=ypos
 y=0
 text11 = font.render(str(int(y)),1,(0,0,200))
 i=False
@@ -230,7 +233,34 @@ def Emoveimage():
             counter2+=1
             if  counter2>2: #i have 8 images in my row (first is 0)
                 counter2 = 0
-
+                
+def bowattack():
+    global HE
+    global PD
+    global bx
+    global by
+    a=0
+    d=4
+    global bow
+    if keys[pygame.K_a] and Bow==True:
+        bow=True
+        for x in range (0,3):
+            if direction==x:
+                d=x
+                print(d)
+    if bow==True:
+        if d==0:
+            bx-=1
+        if d==1:
+            bx+=1
+        if d==2:
+            by+=1
+        if d==3:
+            by-=1
+        if bx+10>ex and bx<ex+54 and by+3>ey+2 and by<ey+61:
+            HE-=PD
+            print("hit3")
+            bow=False
 def healthbars():
     global HP
     global HE
@@ -376,6 +406,7 @@ while HP>0: #GAME LOOP
         pressed[PLAY]=False
     if keys[pygame.K_c]:
         con()
+    bowattack()
 #render section
     screen.fill((255, 255, 255))
         #pygame.draw.rect(screen, (0,0,0), [0,16, 102, 48])
@@ -476,7 +507,8 @@ while HP>0: #GAME LOOP
     screen.blit(text3, (350,16))
     screen.blit(text4, (0,36))
     screen.blit(text5, (0,56))
-    
+    if bow==True:
+        pygame.draw.rect(screen, (0,0,0), [bx,by,10,3])
     #pygame.draw.rect(screen, (0,0,0), [64*3,64*2,64,64])
     #if i==True:
      #   boomrect = boom.get_rect(topleft=(0,0))
