@@ -8,8 +8,8 @@ pygame.display.set_caption('The One Who Hides')
 tempimage = pygame.image.load('warrior.png')
 image=pygame.Surface.convert_alpha(tempimage)
 image1 = pygame.image.load('warrior3.png')
-floor = pygame.image.load('grey64.png')
-wall = pygame.image.load('dgrey64.png')
+floor = pygame.image.load('floor1.png')
+wall = pygame.image.load('wall.png')
 door = pygame.image.load('door.png')
 boom = pygame.image.load('boom.png')
 green = pygame.image.load('64green.png')
@@ -63,6 +63,7 @@ y=0
 text11 = font.render(str(int(y)),1,(0,0,200))
 i=False
 direction1=0
+d=4
 PA=False#player has landed a hit
 ET=[False,False,False,False,False,False,False,False]#enemy type= last laugh, normal, fire, water, earth, wind, enraged, bulky
 print(ET[6])
@@ -150,11 +151,10 @@ def playerattack():
             if keys[pygame.K_SPACE] and w==95:
                 print("hit")
                 w=0
-                HE-=PD
+                HE-=PD*2
                 print("enemy, ",HE)
                 if ET[0]==True:
-                    a=PD/2
-                    HP-=a
+                    HP-=PD
                     print("player, ",HP)
     screen.blit(text14, (205,16))
 def enemyattack():
@@ -167,11 +167,11 @@ def enemyattack():
     if x<190:
         x+=1
     if ex+5<xpos+54 and ex+54>xpos+5 and ey+2<ypos+61 and ey+61>ypos+2 and x==190:
-        if y<35:
+        if y<25:
             y+=1
             text11 = font.render(str(int(y)),1,(0,0,200))
             screen.blit(text11, (560,16))
-            if y==34:
+            if y==24:
                 print("hit2")
                 x=0
                 y=0
@@ -240,27 +240,40 @@ def bowattack():
     global bx
     global by
     a=0
-    d=4
+    global d
     global bow
     if keys[pygame.K_a] and Bow==True:
         bow=True
-        for x in range (0,3):
+        for x in range (0,4):
             if direction==x:
                 d=x
-                print(d)
+                #print(d)
+                #print(bx,",",by)
+                #print("Player ",xpos,",",ypos)
     if bow==True:
         if d==0:
-            bx-=1
+            bx-=7
         if d==1:
-            bx+=1
+            bx+=7
         if d==2:
-            by+=1
+            by+=7
         if d==3:
-            by-=1
+            by-=7
         if bx+10>ex and bx<ex+54 and by+3>ey+2 and by<ey+61:
             HE-=PD
             print("hit3")
             bow=False
+    if bx<64:
+            bow=False
+    if bx+10>576:
+            bow=False
+    if by<64:
+            bow=False
+    if by+3>576:
+            bow=False
+    if bow==False:
+        bx=xpos+32
+        by=ypos+32
 def healthbars():
     global HP
     global HE
@@ -390,9 +403,9 @@ while HP>0: #GAME LOOP
     text12 = font.render(str(int(z)),1,(0,0,200))
     screen.blit(text12, (100,36))
     healthbars()
-    if HE==0:
+    if HE<=0 and HE>-100:
         money+=100
-        HE-=1
+        HE=-100
         print(money)
         text15 = font.render(str(int(money)),1,(0,0,200))
     if HE<=0:
@@ -408,7 +421,7 @@ while HP>0: #GAME LOOP
         con()
     bowattack()
 #render section
-    screen.fill((255, 255, 255))
+    screen.fill((0, 0, 0))
         #pygame.draw.rect(screen, (0,0,0), [0,16, 102, 48])
         #screen.blit(text, (5,21))
         
@@ -508,7 +521,7 @@ while HP>0: #GAME LOOP
     screen.blit(text4, (0,36))
     screen.blit(text5, (0,56))
     if bow==True:
-        pygame.draw.rect(screen, (0,0,0), [bx,by,10,3])
+        pygame.draw.rect(screen, (255,255,255), [bx,by,10,3])
     #pygame.draw.rect(screen, (0,0,0), [64*3,64*2,64,64])
     #if i==True:
      #   boomrect = boom.get_rect(topleft=(0,0))
