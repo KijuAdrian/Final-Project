@@ -17,13 +17,14 @@ red = pygame.image.load('64red.png')
 clock = pygame.time.Clock()
 
 font = pygame.font.Font('freesansbold.ttf',20)
-text = font.render('Bow:100 moneys',1,(0,0,200))
-text1 = font.render('Health+50:25 moneys',1,(0,0,200))
-text2 = font.render('Player hit cooldown:     /95',1,(0,0,200))
-text3 = font.render('Enemy hit cooldown:     /34',1,(0,0,200))
-text4 = font.render('Bow charge: ',1,(0,0,200))
-text5 = font.render('Money: ',1,(0,0,200))
-text13= font.render('/200',1,(0,0,200))
+text = font.render('Bow:100 moneys',1,(255,255,255))
+text1 = font.render('Health+50:25 moneys',1,(255,255,255))
+text2 = font.render('Player hit cooldown:     /95',1,(255,255,255))
+text3 = font.render('Enemy hit cooldown:     /34',1,(255,255,255))
+text4 = font.render('Bow charge: ',1,(255,255,255))
+text5 = font.render('Money: ',1,(255,255,255))
+text13= font.render('/200',1,(255,255,255))
+text20= font.render('Agile:200 moneys',1,(255,255,255))
 PLAYING=0
 SHOPPING=1
 PLAY = 0
@@ -49,18 +50,21 @@ HE=10#enemy health
 PD=10#player damage
 ED=30 #enemy damage
 money=0
-text15 = font.render(str(int(money)),1,(0,0,200))
+text15 = font.render(str(int(money)),1,(255,255,255))
 z=0
-text12 = font.render(str(int(z)),1,(0,0,200))
+text12 = font.render(str(int(z)),1,(255,255,255))
 w=0
-text14 = font.render(str(int(w)),1,(0,0,200))
+q=0
+text14 = font.render(str(int(w)),1,(255,255,255))
 x=0
+Agile=False
+text21 = font.render(str(int(x)),1,(255,255,255))
 Bow=False
 bow=False
 bx=xpos
 by=ypos
 y=0
-text11 = font.render(str(int(y)),1,(0,0,200))
+text11 = font.render(str(int(y)),1,(255,255,255))
 i=False
 direction1=0
 d=4
@@ -74,7 +78,7 @@ def market():
     if xpos>64*3 and xpos<64*4 and ypos>64*2 and ypos<64*3:
         if z<200:
             z+=1
-            text12 = font.render(str(int(z)),1,(0,0,200))
+            text12 = font.render(str(int(z)),1,(255,255,255))
             screen.blit(text12, (64*3,64*2))
             screen.blit(text13, (64*3,64*2+20))
         if z==200 and money>=100:
@@ -90,7 +94,7 @@ def market1():
     if xpos>64*6 and xpos<64*7 and ypos>64*2 and ypos<64*3:
         if z<200:
             z+=1
-            text12 = font.render(str(int(z)),1,(0,0,200))
+            text12 = font.render(str(int(z)),1,(255,255,255))
             screen.blit(text12, (64*6,64*2))
             screen.blit(text13, (64*6,64*2+20))
         if z==200 and money>=25:
@@ -101,6 +105,22 @@ def market1():
             money-=25
             z=0
             print(HP)
+    else:
+        z=0
+def market2():
+    global money
+    global z
+    global Agile
+    if xpos>64*3 and xpos<64*4 and ypos>64*5 and ypos<64*6:
+        if z<200 and money>=200 and Bow==True:
+            z+=1
+            text12 = font.render(str(int(z)),1,(255,255,255))
+            screen.blit(text12, (64*3,64*5))
+            screen.blit(text13, (64*3,64*5+20))
+        if z==200 and money>=200:
+            Agile=True
+            print("its pizza time, i mean Agile")
+            money-=200
     else:
         z=0
 def con():
@@ -143,10 +163,10 @@ def playerattack():
     global HE#enemy health
     global PD#player damage
     global w
-    text14 = font.render(str(int(w)),1,(0,0,200))
+    text14 = font.render(str(int(w)),1,(255,255,255))
     if w<95:
         w+=1
-        text14 = font.render(str(int(w)),1,(0,0,200))
+        text14 = font.render(str(int(w)),1,(255,255,255))
     if xpos+5<ex+54 and xpos+54>ex+5 and ypos+2<ey+61 and ypos+61>ey+2:
             if keys[pygame.K_SPACE] and w==95:
                 print("hit")
@@ -162,18 +182,18 @@ def enemyattack():
     global HE#enemy health
     global PD#player damage
     global ED#enemy damage
-    global x
     global y
-    if x<190:
-        x+=1
-    if ex+5<xpos+54 and ex+54>xpos+5 and ey+2<ypos+61 and ey+61>ypos+2 and x==190:
+    global q
+    if q<190:
+        q+=1
+    if ex+5<xpos+54 and ex+54>xpos+5 and ey+2<ypos+61 and ey+61>ypos+2 and q==190:
         if y<25:
             y+=1
-            text11 = font.render(str(int(y)),1,(0,0,200))
+            text11 = font.render(str(int(y)),1,(255,255,255))
             screen.blit(text11, (560,16))
             if y==24:
                 print("hit2")
-                x=0
+                q=0
                 y=0
                 i=True
                 HP-=ED
@@ -242,14 +262,31 @@ def bowattack():
     a=0
     global d
     global bow
-    if keys[pygame.K_a] and Bow==True:
-        bow=True
-        for x in range (0,4):
-            if direction==x:
-                d=x
+    global x
+    text21 = font.render(str(int(x)),1,(255,255,255))
+    if keys[pygame.K_DOWN]==False and keys[pygame.K_UP]==False and keys[pygame.K_RIGHT]==False and keys[pygame.K_LEFT]==False and keys[pygame.K_LSHIFT]==False:
+        if x<95:
+            x+=1
+            print(x, " x")
+            text21 = font.render(str(int(x)),1,(255,255,255))
+    else:
+        if Agile==True and x<95:
+            x+=1
+            print(x)
+            text21 = font.render(str(int(x)),1,(255,255,255))
+        elif Agile==False and x<95 and (keys[pygame.K_DOWN] or keys[pygame.K_UP] or keys[pygame.K_RIGHT] or keys[pygame.K_LEFT] or keys[pygame.K_LSHIFT]):
+            x=0
+            print (x)
+            text21 = font.render(str(int(x)),1,(255,255,255))
+    if keys[pygame.K_a] and Bow==True and x>=94:
+            bow=True
+            for x in range (0,4):
+                if direction==x:
+                    d=x
                 #print(d)
                 #print(bx,",",by)
                 #print("Player ",xpos,",",ypos)
+    screen.blit(text21, (125,36))
     if bow==True:
         if d==0:
             bx-=7
@@ -400,14 +437,16 @@ while HP>0: #GAME LOOP
         else:
             ypos+=2
 
-    text12 = font.render(str(int(z)),1,(0,0,200))
+    text12 = font.render(str(int(z)),1,(255,255,255))
     screen.blit(text12, (100,36))
+    text21=font.render(str(int(x)),1,(255,255,255))
+    screen.blit(text21, (100,252))
     healthbars()
     if HE<=0 and HE>-100:
         money+=100
         HE=-100
         print(money)
-        text15 = font.render(str(int(money)),1,(0,0,200))
+        text15 = font.render(str(int(money)),1,(255,255,255))
     if HE<=0:
         if keys[pygame.K_t]:
             pressed[SHOP]=True
@@ -419,10 +458,9 @@ while HP>0: #GAME LOOP
         pressed[PLAY]=False
     if keys[pygame.K_c]:
         con()
-    bowattack()
 #render section
     screen.fill((0, 0, 0))
-        #pygame.draw.rect(screen, (0,0,0), [0,16, 102, 48])
+        #pygame.draw.rect(screen, (255,255,255), [0,16, 102, 48])
         #screen.blit(text, (5,21))
         
     for i in range (10):
@@ -485,6 +523,7 @@ while HP>0: #GAME LOOP
             enemyattack()
             Emoveimage()
         playerattack()
+        bowattack()
         screen.blit(text15, (80,56))
     
         if HE<=0:
@@ -497,24 +536,30 @@ while HP>0: #GAME LOOP
                [2,0,0,2,0,0,2,0,0,2],
                [2,0,0,0,0,0,0,0,0,2],
                [2,0,0,0,0,0,0,0,0,2],  
-               [2,0,0,0,0,0,0,0,0,2],
+               [2,0,0,2,0,0,0,0,0,2],
                [2,0,0,0,0,0,0,0,0,2],
                [2,0,0,0,0,0,0,0,0,2],
                [2,0,0,0,0,0,0,0,0,2],
                [2,2,2,2,2,2,2,2,2,2],]
-        screen.blit(text, (64*3-50,64*2-20))
+        if Bow==False:
+            screen.blit(text, (64*3-50,64*2-20))
         screen.blit(text1, (64*6-50,64*2-20))
+        screen.blit(text20, (64*3-50,64*5-20))
         if Bow==False:
             if xpos>64*3-10 and xpos<64*4+10 and ypos>64*2-10 and ypos<64*3+10:
                 market()
         if HP<=99:
             if xpos>64*6-10 and xpos<64*7+10 and ypos>64*2-10 and ypos<64*3+10:
                 market1()
+        if Agile==False:
+            if xpos>64*3-10 and xpos<64*4+10 and ypos>64*5-10 and ypos<64*6+10:
+                market2()
         healthbars()
         if pressed[PLAY] == True:
             game_state = PLAYING
         playerattack()
-        text15 = font.render(str(int(money)),1,(0,0,200))
+        bowattack()
+        text15 = font.render(str(int(money)),1,(255,255,255))
         screen.blit(text15, (80,56))
     screen.blit(text2, (0,16))
     screen.blit(text3, (350,16))
@@ -522,7 +567,7 @@ while HP>0: #GAME LOOP
     screen.blit(text5, (0,56))
     if bow==True:
         pygame.draw.rect(screen, (255,255,255), [bx,by,10,3])
-    #pygame.draw.rect(screen, (0,0,0), [64*3,64*2,64,64])
+    #pygame.draw.rect(screen, (255,255,255), [64*3,64*2,64,64])
     #if i==True:
      #   boomrect = boom.get_rect(topleft=(0,0))
       #  screen.blit(boom, boomrect)
