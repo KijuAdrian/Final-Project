@@ -5,6 +5,10 @@ pygame.init()
 print(pygame.font.get_fonts())
 screen = pygame.display.set_mode((640,640))
 pygame.display.set_caption('The One Who Hides')
+clock = pygame.time.Clock()
+#cocunut jpg(mysterious variable that breaks game if deleted)
+i=False
+#Image declerations---------------------------------------------
 tempimage = pygame.image.load('warrior.png')
 image=pygame.Surface.convert_alpha(tempimage)
 image1 = pygame.image.load('warrior3.png')
@@ -14,8 +18,7 @@ door = pygame.image.load('door.png')
 boom = pygame.image.load('boom.png')
 green = pygame.image.load('64green.png')
 red = pygame.image.load('64red.png')
-clock = pygame.time.Clock()
-
+#Text declerations-------excluding variable tracking text------
 font = pygame.font.Font('freesansbold.ttf',20)
 text = font.render('Bow:100 moneys',1,(255,255,255))
 text1 = font.render('Health+50:25 moneys',1,(255,255,255))
@@ -33,52 +36,58 @@ text321= font.render('man reload arrows',1,(255,255,255))
 text322= font.render('while you move',1,(255,255,255))
 text50= font.render('CONTROLS:MOVE;up,down,left,rigth ATTACK;space bar BOW;"a"',1,(255,255,255))
 text51= font.render('SHOP;"t" PLAY;"Y"and"c" stand on the shop boxes to buy',1,(255,255,255))
+#gamestates declerations----------------------------------------
 PLAYING=0
 SHOPPING=1
 PLAY = 0
 SHOP = 1
 game_state = PLAYING
 pressed = [False, False]
-
+#Game varibles--------------------------------------------------
+#player variables
+money=0
 my=0
 mx=0
 mousePos=(my,mx)
-xpos = 300
+xpos = 300 
 ypos = 480
+HP=100#player health
+PD=10#player damage
+#enemy variables
+HE=10#enemy health
+ED=30 #enemy damage
 ex=300
 ey=160
+ET=[False,False,False,False,False,False,False,True]#enemy type= last laugh, normal, fire, water, earth, wind, enraged, bulky
+#animation variables
 counter1=0
 counter=1
 counter2=0
 counter3=0
 direction = 3 #0 is left, 1 is right, 2 is up, 3 is down
+#sprint and moevement function variable
 d1=False
-HP=100#player health
-HE=10#enemy health
-PD=10#player damage
-ED=30 #enemy damage
-money=0
+#number holding variables for timing
 text15 = font.render(str(int(money)),1,(255,255,255))
 z=0
 text12 = font.render(str(int(z)),1,(255,255,255))
 w=0
-q=0
 text14 = font.render(str(int(w)),1,(255,255,255))
+q=0
 x=0
-Agile=False
 text21 = font.render(str(int(x)),1,(255,255,255))
-Bow=False
-bow=False
-bx=xpos
-by=ypos
 y=0
 text11 = font.render(str(int(y)),1,(255,255,255))
-i=False
-direction1=0
-d=4
-PA=False#player has landed a hit
-ET=[False,False,False,False,False,False,False,True]#enemy type= last laugh, normal, fire, water, earth, wind, enraged, bulky
-print(ET[6])
+#upgrades
+Agile=False#reload while moving
+Bow=False#bow
+#bow/arrow variables
+bow=False#arrow boolean 
+bx=xpos
+by=ypos
+direction1=0#arrow direction based on player direction
+d=4#direction holding variable
+#all market functions control buying an upgrade
 def market():
     global money
     global z
@@ -131,17 +140,14 @@ def market2():
             money-=200
     else:
         z=0
-def con():
-    global HE
-    HE=100
-    print(HE, " enemy")
+#controls direction, and speed
 def enemymove():
     global ey
     global ex
     global direction1
     a=0
     b=0
-    if ey>ypos and ET[6]==True:
+    if ey>ypos and ET[6]==True:#ET6 controls enraged so itll make the nemy faster
         ey-=2
         direction1=3
     if ey<ypos and ET[6]==True:
@@ -165,7 +171,7 @@ def enemymove():
     if ex<xpos and ET[6]==False:
         ex+=1
         direction1=1
-        
+#control detection, reload, hitting key detection, and attacking math
 def playerattack():
     global HP#player health
     global HE#enemy health
@@ -185,6 +191,7 @@ def playerattack():
                     HP-=PD
                     print("player, ",HP)
     screen.blit(text14, (205,16))
+#same thing as player attack but for the enemy
 def enemyattack():
     global HP#player health
     global HE#enemy health
@@ -208,7 +215,7 @@ def enemyattack():
                 print("player, ",HP)
     else:
         y=0
-            
+#by taking in direction from player movement, this creates animation
 def moveimage():
     global counter1
     global counter
@@ -216,7 +223,7 @@ def moveimage():
     global ypos
     global d1
     if direction==0 or direction==1:
-        if direction==0 and d1==True:
+        if direction==0 and d1==True:#d1=shifting/sprinting
             d=-3
             d1=False
         elif direction==1 and d1==True:
@@ -231,7 +238,7 @@ def moveimage():
         if counter1>5:
             counter1=0
             counter+=1
-            if  counter>2: #i have 8 images in my row (first is 0)
+            if  counter>2: # 
                 counter = 0
     elif direction==2 or direction==3:
         if direction==2 and d1==False:
@@ -249,9 +256,9 @@ def moveimage():
         if  counter1>5:
             counter1=0
             counter+=1
-            if  counter>2: #i have 8 images in my row (first is 0)
+            if  counter>2: # 
                 counter = 0
-
+#enemy animation
 def Emoveimage():
     global counter2
     global counter3
@@ -259,9 +266,9 @@ def Emoveimage():
     if counter3>5:
             counter3=0
             counter2+=1
-            if  counter2>2: #i have 8 images in my row (first is 0)
+            if  counter2>2: # 
                 counter2 = 0
-                
+#controls bow,       
 def bowattack():
     global HE
     global PD
@@ -272,20 +279,24 @@ def bowattack():
     global bow
     global x
     text21 = font.render(str(int(x)),1,(255,255,255))
+    #if person doesnt move reload bow
     if keys[pygame.K_DOWN]==False and keys[pygame.K_UP]==False and keys[pygame.K_RIGHT]==False and keys[pygame.K_LEFT]==False and keys[pygame.K_LSHIFT]==False:
         if x<95:
             x+=1
             print(x, " x")
             text21 = font.render(str(int(x)),1,(255,255,255))
+    #unless they have agile upgrade see first lines for agile definition
     else:
         if Agile==True and x<95:
             x+=1
             print(x)
             text21 = font.render(str(int(x)),1,(255,255,255))
+            #now that i see this this couldve been much more efficient
         elif Agile==False and x<95 and (keys[pygame.K_DOWN] or keys[pygame.K_UP] or keys[pygame.K_RIGHT] or keys[pygame.K_LEFT] or keys[pygame.K_LSHIFT]):
             x=0
             print (x)
             text21 = font.render(str(int(x)),1,(255,255,255))
+    #if bow is reloaded and they press a shoot the arrow
     if keys[pygame.K_a] and Bow==True and x>=94:
             bow=True
             for x in range (0,4):
@@ -295,6 +306,7 @@ def bowattack():
                 #print(bx,",",by)
                 #print("Player ",xpos,",",ypos)
     screen.blit(text21, (125,36))
+    # bow movement control
     if bow==True:
         if d==0:
             bx-=7
@@ -304,10 +316,12 @@ def bowattack():
             by+=7
         if d==3:
             by-=7
+            #detects a hit and maths it
         if bx+10>ex and bx<ex+54 and by+3>ey+2 and by<ey+61:
             HE-=PD
             print("hit3")
             bow=False
+    #if the arrow hits a wall it go bye bye
     if bx<64:
             bow=False
     if bx+10>576:
@@ -316,9 +330,11 @@ def bowattack():
             bow=False
     if by+3>576:
             bow=False
+    #reset bow when hitting something
     if bow==False:
         bx=xpos+32
         by=ypos+32
+#controls health bar animation
 def healthbars():
     global HP
     global HE
@@ -378,7 +394,7 @@ def healthbars():
         HB  =[[0,0,0,0,0,0,0,0,0,0]]
     if HE<=0:
         EHB =[[0,0,0,0,0,0,0,0,0,0]]
-    
+#game grid for images 0=floor, 2=wall,3=doors
 Map = [[2,2,2,2,3,3,2,2,2,2],
        [2,0,0,0,0,0,0,0,0,2],
        [2,0,0,0,0,0,0,0,0,2],
@@ -389,26 +405,26 @@ Map = [[2,2,2,2,3,3,2,2,2,2],
        [2,0,0,0,0,0,0,0,0,2],
        [2,0,0,0,0,0,0,0,0,2],
        [2,2,2,2,2,2,2,2,2,2],]
-
+#health bars for enemy and player
 HB  =[[1,1,1,1,1,1,1,1,1,1]]
 EHB =[[1,1,1,1,1,1,1,1,1,1]]
 
 while HP>0: #GAME LOOP
     clock.tick(60)
 #input/output section
-      
+    #if this happens quit everthing
     events = pygame.event.get()
     for event in pygame.event.get() :
         if event.type == pygame.QUIT :
             pygame.quit()
             quit()
+    #get mousemotion for...i actually dont need this 
     for event in events:
         if event.type==pygame.MOUSEMOTION:
             mousePos=event.pos
-        #if event.type == pygame.MOUSEBUTTONDOWN : #check if clicked#fix will go here
-         #   if mousePos[0]<64 and mousePos[0]>0 and mousePos[1]<66 and mousePos[1]>16:
-          #      shop()
+    #get key input
     keys = pygame.key.get_pressed()
+    #player movemnt
     if keys[pygame.K_LEFT]:
         direction=0
         moveimage()
@@ -424,6 +440,7 @@ while HP>0: #GAME LOOP
     if keys[pygame.K_LSHIFT]:
         d1=True
         moveimage()
+    #if they collide with wall bounce them back
     if xpos>512:
         if keys[pygame.K_LSHIFT]:
             xpos-=5
@@ -450,27 +467,27 @@ while HP>0: #GAME LOOP
     text21=font.render(str(int(x)),1,(255,255,255))
     screen.blit(text21, (100,252))
     healthbars()
+    #if enemy dies give money
     if HE<=0 and HE>-100:
         money+=100
         HE=-100
-        print(money)
         text15 = font.render(str(int(money)),1,(255,255,255))
+    #If enemy dies allow for player to pull up shop
     if HE<=0:
         if keys[pygame.K_t]:
             pressed[SHOP]=True
         else:
             pressed[SHOP]=False
+    #press y to go back from shop
     if keys[pygame.K_y]:
         pressed[PLAY]=True
     else:
         pressed[PLAY]=False
     if keys[pygame.K_c]:
-        con()
+        HE=100
 #render section
     screen.fill((0, 0, 0))
-        #pygame.draw.rect(screen, (255,255,255), [0,16, 102, 48])
-        #screen.blit(text, (5,21))
-        
+    #grid image maths 
     for i in range (10):
             for j in range (10):
                 if Map[j][i]==0:
@@ -498,6 +515,7 @@ while HP>0: #GAME LOOP
                 if EHB[j][i]==0:
                     redrect = red.get_rect(topleft=(480+i*16,j*64))
                     screen.blit(red, redrect)
+    #where player animation maths happen
     if direction == 0:
         screen.blit(image, (xpos,ypos), (0+counter*64,128,64,64)) #each of my images are 32 wide, 48 tall
     if direction == 1:
@@ -506,7 +524,7 @@ while HP>0: #GAME LOOP
         screen.blit(image, (xpos,ypos), (0+counter*64,0,64,64)) #each of my images are 32 wide, 48 tall
     if direction == 3:
         screen.blit(image, (xpos,ypos), (0+counter*64,64,64,64)) #each of my images are 32 wide, 48 tall
-        
+    #all this runs when playing gamestate runss
     if game_state == PLAYING:
         Map = [[2,2,2,2,3,3,2,2,2,2],
                [2,0,0,0,0,0,0,0,0,2],
@@ -518,6 +536,7 @@ while HP>0: #GAME LOOP
                [2,0,0,0,0,0,0,0,0,2],
                [2,0,0,0,0,0,0,0,0,2],
                [2,2,2,2,2,2,2,2,2,2],]
+        #as long as enemy lives, animate his movements
         if HE>0:
             if direction1 == 0:
                 screen.blit(image1, (ex,ey), (0+counter2*64,128,64,64)) #each of my images are 32 wide, 48 tall
@@ -533,11 +552,11 @@ while HP>0: #GAME LOOP
         playerattack()
         bowattack()
         screen.blit(text15, (80,56))
-    
+        #another function to allow for shop,...i could probably get rid of one
         if HE<=0:
             if pressed[SHOP] == True:
                 game_state = SHOPPING
-            
+    # this code runs when your in the shop
     if game_state == SHOPPING:
         Map = [[2,2,2,2,2,2,2,2,2,2],
                [2,0,0,0,0,0,0,0,0,2],
@@ -549,6 +568,7 @@ while HP>0: #GAME LOOP
                [2,0,0,0,0,0,0,0,0,2],
                [2,0,0,0,0,0,0,0,0,2],
                [2,2,2,2,2,2,2,2,2,2],]
+        #text for the shop descriptions for the abilities
         if Bow==False:
             screen.blit(text, (64*3-50,64*2-20))
         screen.blit(text1, (64*6-50,64*2-20))
