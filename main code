@@ -1,5 +1,4 @@
 import pygame
-import time
 pygame.init()
 
 print(pygame.font.get_fonts())
@@ -46,9 +45,6 @@ pressed = [False, False]
 #Game varibles--------------------------------------------------
 #player variables
 money=0
-my=0
-mx=0
-mousePos=(my,mx)
 xpos = 300 
 ypos = 480
 HP=100#player health
@@ -92,6 +88,7 @@ def market():
     global money
     global z
     global Bow
+    #if they stand in box ability to buy=True
     if xpos>64*3 and xpos<64*4 and ypos>64*2 and ypos<64*3:
         if z<200:
             z+=1
@@ -108,6 +105,7 @@ def market1():
     global money
     global z
     global HP
+    #if they stand in box ability to buy=True
     if xpos>64*6 and xpos<64*7 and ypos>64*2 and ypos<64*3:
         if z<200:
             z+=1
@@ -128,6 +126,7 @@ def market2():
     global money
     global z
     global Agile
+    #if they stand in box ability to buy=True
     if xpos>64*3 and xpos<64*4 and ypos>64*5 and ypos<64*6:
         if z<200 and money>=200 and Bow==True:
             z+=1
@@ -145,8 +144,6 @@ def enemymove():
     global ey
     global ex
     global direction1
-    a=0
-    b=0
     if ey>ypos and ET[6]==True:#ET6 controls enraged so itll make the nemy faster
         ey-=2
         direction1=3
@@ -178,9 +175,11 @@ def playerattack():
     global PD#player damage
     global w
     text14 = font.render(str(int(w)),1,(255,255,255))
+    #timer
     if w<95:
         w+=1
         text14 = font.render(str(int(w)),1,(255,255,255))
+    #if player is close or inside enemy ability to attack=True
     if xpos+5<ex+54 and xpos+54>ex+5 and ypos+2<ey+61 and ypos+61>ey+2:
             if keys[pygame.K_SPACE] and w==95:
                 print("hit")
@@ -210,7 +209,6 @@ def enemyattack():
                 print("hit2")
                 q=0
                 y=0
-                i=True
                 HP-=ED
                 print("player, ",HP)
     else:
@@ -274,7 +272,6 @@ def bowattack():
     global PD
     global bx
     global by
-    a=0
     global d
     global bow
     global x
@@ -291,20 +288,17 @@ def bowattack():
             x+=1
             print(x)
             text21 = font.render(str(int(x)),1,(255,255,255))
-            #now that i see this this couldve been much more efficient
+        # if they dont have agility, then thier timer resets
         elif Agile==False and x<95 and (keys[pygame.K_DOWN] or keys[pygame.K_UP] or keys[pygame.K_RIGHT] or keys[pygame.K_LEFT] or keys[pygame.K_LSHIFT]):
             x=0
             print (x)
             text21 = font.render(str(int(x)),1,(255,255,255))
-    #if bow is reloaded and they press a shoot the arrow
+    #if bow is reloaded and they press 'a' shoot the arrow
     if keys[pygame.K_a] and Bow==True and x>=94:
             bow=True
             for x in range (0,4):
                 if direction==x:
                     d=x
-                #print(d)
-                #print(bx,",",by)
-                #print("Player ",xpos,",",ypos)
     screen.blit(text21, (125,36))
     # bow movement control
     if bow==True:
@@ -418,10 +412,6 @@ while HP>0: #GAME LOOP
         if event.type == pygame.QUIT :
             pygame.quit()
             quit()
-    #get mousemotion for...i actually dont need this 
-    for event in events:
-        if event.type==pygame.MOUSEMOTION:
-            mousePos=event.pos
     #get key input
     keys = pygame.key.get_pressed()
     #player movemnt
@@ -574,6 +564,7 @@ while HP>0: #GAME LOOP
         screen.blit(text1, (64*6-50,64*2-20))
         screen.blit(text20, (64*3-50,64*5-20))
         screen.blit(text30, (180,190))
+        # if the player is within the box then if market functions will happen
         if Bow==False:
             if xpos>64*3-10 and xpos<64*4+10 and ypos>64*2-10 and ypos<64*3+10:
                 market()
@@ -595,18 +586,16 @@ while HP>0: #GAME LOOP
         screen.blit(text32, (150,382))
         screen.blit(text321, (150,398))
         screen.blit(text322, (160,414))
+    # most of the lines here are user interface, like attack reaload timers
     screen.blit(text2, (0,16))
     screen.blit(text3, (350,16))
     screen.blit(text4, (0,36))
     screen.blit(text5, (0,56))
     screen.blit(text50, (0,608))
     screen.blit(text51, (0,624))
+    # if player uses bow draw the arrow
     if bow==True:
         pygame.draw.rect(screen, (255,255,255), [bx,by,10,3])
-    #pygame.draw.rect(screen, (255,255,255), [64*3,64*2,64,64])
-    #if i==True:
-     #   boomrect = boom.get_rect(topleft=(0,0))
-      #  screen.blit(boom, boomrect)
     pygame.display.flip() #draw all the stuff from memory to screen
     
 pygame.quit() #buh bye
