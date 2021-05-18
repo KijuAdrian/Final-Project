@@ -10,7 +10,8 @@ i=False
 #Image declerations---------------------------------------------
 tempimage = pygame.image.load('warrior.png')
 image=pygame.Surface.convert_alpha(tempimage)
-image1 = pygame.image.load('warrior3.png')
+tempimage1 = pygame.image.load('warrior3.png')
+image1=pygame.Surface.convert_alpha(tempimage1)
 floor = pygame.image.load('floor1.png')
 wall = pygame.image.load('wall.png')
 door = pygame.image.load('door.png')
